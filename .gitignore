@@ -1,0 +1,24 @@
+# Local development files
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+.env
+.venv
+.coverage
+htmlcov/
+
+# Setup scripts (as requested)
+setup_and_push.py
+setup_and_push.sh
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo

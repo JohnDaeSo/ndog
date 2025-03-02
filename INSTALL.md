@@ -1,87 +1,128 @@
-# ndog Installation Guide
+# Installation Guide for ndog
 
-This guide explains how to install the ndog network utility on your system. ndog is a Python-based utility similar to ncat, designed to work with public IPs across different networks.
+This document provides detailed instructions for installing and setting up ndog on various platforms.
 
-## Installation Options
+## Prerequisites
 
-ndog provides two installation methods:
+- Python 3.6 or higher
+- pip (Python package installer)
+- Basic knowledge of command-line operations
 
-### Option 1: Bash Installer (Recommended for Linux/macOS)
+## Option 1: Install from PyPI (Recommended)
+
+The easiest way to install ndog is using pip:
 
 ```bash
-# Make the installer executable
-chmod +x install.sh
-
-# Run the installer
-sudo ./install.sh
+pip install ndog
 ```
 
-If you don't have sudo access, you can still install ndog in your user directory:
+This will install the latest stable version of ndog along with all dependencies.
+
+## Option 2: Manual Installation
+
+### Step 1: Clone the Repository
 
 ```bash
-chmod +x install.sh
-./install.sh
-```
-
-### Option 2: Python Installer
-
-```bash
-# Run the Python installer
-python3 install.py
-```
-
-## What the Installers Do
-
-Both installers perform the following tasks:
-
-1. Check for Python 3 and pip installation
-2. Install required Python dependencies:
-   - argparse
-   - tqdm
-   - colorama
-   - ipaddress
-3. Copy the ndog files to the appropriate system directory:
-   - If run with admin/sudo: `/usr/local/share/ndog/` (system-wide)
-   - If run without admin/sudo: `~/.local/share/ndog/` (user-only)
-4. Create a wrapper script in your PATH to make ndog executable from anywhere
-5. Check if the installation directory is in your PATH and offer to add it
-
-## Manual Installation
-
-If you prefer to install ndog manually:
-
-```bash
-# 1. Clone the repository
+# Clone the repository
 git clone https://github.com/yourusername/ndog.git
+
+# Navigate to the project directory
 cd ndog
-
-# 2. Install dependencies
-pip install -r requirements.txt
-
-# 3. Make the script executable
-chmod +x ndog.py
-
-# 4. Create a symbolic link to make it available in your PATH
-ln -s "$(pwd)/ndog.py" ~/.local/bin/ndog
 ```
 
-## Verifying Installation
-
-To verify that ndog was installed correctly, run:
+### Step 2: Install Dependencies
 
 ```bash
-ndog --help
+# Install required packages
+pip install -r requirements.txt
 ```
 
-You should see the help message with all available options.
+### Step 3: Make the Scripts Executable (Linux/macOS)
+
+```bash
+chmod +x ndog.py
+chmod +x ndog_simple.py
+```
+
+### Step 4: Test the Installation
+
+```bash
+# Run the help command to verify installation
+python ndog_simple.py --help
+```
+
+## Platform-Specific Instructions
+
+### Windows
+
+1. Ensure Python is in your PATH environment variable
+2. Use `py` or `python` instead of `./ndog_simple.py` in examples
+3. For best terminal experience, use Windows Terminal or a modern console
+
+### macOS
+
+1. You may need to install Python 3 if not already installed:
+   ```bash
+   brew install python3
+   ```
+2. Use `python3` instead of `python` if both Python 2 and 3 are installed
+
+### Linux
+
+Most Linux distributions come with Python 3 pre-installed. If not:
+
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install python3 python3-pip
+
+# Fedora
+sudo dnf install python3 python3-pip
+
+# Arch Linux
+sudo pacman -S python python-pip
+```
+
+## Dependencies
+
+ndog requires the following Python packages:
+
+- colorama: For colored terminal output
+- tqdm: For progress bars (optional)
+
+These are automatically installed with the pip installation methods.
 
 ## Troubleshooting
 
-If you encounter issues during installation:
+### Common Issues
 
-1. Make sure you have Python 3.6+ installed
-2. Check if pip is installed and working
-3. Ensure you have necessary permissions to install to system directories
-4. If you installed to a user directory, make sure it's in your PATH
+- **ModuleNotFoundError**: Make sure you've installed all required dependencies.
+  ```bash
+  pip install -r requirements.txt
+  ```
 
-For further assistance, please create an issue on GitHub.
+- **Permission denied**: Ensure the script is executable (Linux/macOS).
+  ```bash
+  chmod +x ndog_simple.py
+  ```
+
+- **Port already in use**: Choose a different port with the `-p` option.
+  ```bash
+  python ndog_simple.py -l -p 8081  # try a different port
+  ```
+
+- **Connection refused**: Ensure the target host is reachable and the port is open.
+
+### Getting Help
+
+If you encounter any issues not covered here, please:
+
+1. Check the [GitHub issues](https://github.com/yourusername/ndog/issues) for similar problems
+2. Consult the README.md for usage examples
+3. Open a new issue with detailed information about your problem
+
+## Next Steps
+
+Once installed, refer to the README.md file for usage instructions and examples.
+
+Happy networking with ndog!

@@ -1,0 +1,193 @@
+.TH NDOG 1 "2024" "ndog v1.0" "User Commands"
+.SH NAME
+ndog \- network utility for public IPs
+.SH SYNOPSIS
+.B ndog_simple.py
+.RB [ \-c
+.IR host | \-l ]
+.RB \-p
+.IR port
+.RB [ \-f
+.IR file | \-r
+.IR file | \-m
+.IR message ]
+.RB [ \-u ]
+.RB [ \-v ]
+.RB [ \-h ]
+.SH DESCRIPTION
+.B ndog
+is a Python-based network utility similar to ncat but designed for use with public IPs.
+It allows sending files, messages, and creating connections across different networks.
+.PP
+When used without file transfer or message options, ndog enters an interactive chat mode
+with a rich user interface that displays incoming messages separately from what you're typing.
+.SH OPTIONS
+.TP
+.BR \-c ", " \-\-connect =\fIHOST\fR
+Connect to the specified host
+.TP
+.BR \-l ", " \-\-listen
+Listen for incoming connections
+.TP
+.BR \-p ", " \-\-port =\fIPORT\fR
+Port number to use (required)
+.TP
+.BR \-f ", " \-\-file =\fIFILE\fR
+Specify file to send
+.TP
+.BR \-r ", " \-\-receive =\fIFILE\fR
+Specify filename to save received data
+.TP
+.BR \-m ", " \-\-message =\fIMESSAGE\fR
+Send a text message and exit
+.TP
+.BR \-u ", " \-\-udp
+Use UDP instead of TCP
+.TP
+.BR \-v ", " \-\-verbose
+Enable verbose output
+.TP
+.BR \-h ", " \-\-help
+Show help message and exit
+.SH INTERACTIVE CHAT MODE
+When ndog is run without \fB-f\fR, \fB-r\fR, or \fB-m\fR options, it enters an interactive chat mode.
+This mode provides a rich chat interface with the following features:
+.PP
+.RS
+- Clean user interface with separate input/output display
+.br
+- Timestamp display for all messages
+.br
+- Notification sounds for incoming messages
+.br
+- Character-by-character input with proper backspace handling
+.br
+- Command system for common actions
+.RE
+.SS Chat Commands
+The following commands can be used in chat mode:
+.TP
+.B /help
+Show available commands
+.TP
+.B /clear
+Clear the screen
+.TP
+.B /quit
+Exit the chat session
+.TP
+.B /status
+Show connection status
+.TP
+.B /whoami
+Show your address information
+.SH EXAMPLES
+.SS Basic Connection
+.PP
+Connect to a host:
+.PP
+.RS
+.nf
+python ndog_simple.py -c example.com -p 8080
+.fi
+.RE
+.PP
+Listen for incoming connections:
+.PP
+.RS
+.nf
+python ndog_simple.py -l -p 8080
+.fi
+.RE
+.SS File Transfer
+.PP
+Send a file:
+.PP
+.RS
+.nf
+python ndog_simple.py -c example.com -p 8080 -f document.pdf
+.fi
+.RE
+.PP
+Receive a file:
+.PP
+.RS
+.nf
+python ndog_simple.py -l -p 8080 -r received_document.pdf
+.fi
+.RE
+.SS Text Messaging
+.PP
+Send a single message and exit:
+.PP
+.RS
+.nf
+python ndog_simple.py -c example.com -p 8080 -m "Hello from ndog!"
+.fi
+.RE
+.PP
+Start interactive chat mode:
+.PP
+.RS
+.nf
+python ndog_simple.py -c example.com -p 8080  # as client
+python ndog_simple.py -l -p 8080             # as server
+.fi
+.RE
+.SS Using UDP
+.PP
+Use UDP instead of TCP for any command by adding the \fB-u\fR flag:
+.PP
+.RS
+.nf
+python ndog_simple.py -c example.com -p 8080 -u
+python ndog_simple.py -l -p 8080 -u
+.fi
+.RE
+.SH ADVANCED USAGE
+.SS Simple File Server
+.PP
+Set up a file server that allows anyone to download a file:
+.PP
+.RS
+.nf
+python ndog_simple.py -l -p 8080 -f important_file.pdf
+.fi
+.RE
+.SS Secure File Transfer
+.PP
+When used with SSH tunneling, ndog can provide secure file transfers:
+.PP
+.RS
+.nf
+# On local machine, set up SSH tunnel
+ssh -L 8080:localhost:8080 user@remote_server
+
+# On remote machine
+python ndog_simple.py -l -p 8080
+
+# On local machine
+python ndog_simple.py -c localhost -p 8080 -f secure_document.pdf
+.fi
+.RE
+.SS UDP Broadcasting
+.PP
+Send a message to multiple clients using UDP:
+.PP
+.RS
+.nf
+python ndog_simple.py -c 255.255.255.255 -p 8080 -u -m "Broadcast message"
+.fi
+.RE
+.SH BUGS
+Report bugs to: https://github.com/yourusername/ndog/issues
+.SH SEE ALSO
+.BR nc (1),
+.BR netcat (1),
+.BR socat (1)
+.SH AUTHOR
+Written by YOUR NAME.
+.SH COPYRIGHT
+Copyright \(co 2024 YOUR NAME
+.br
+License: MIT 
