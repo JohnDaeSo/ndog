@@ -30,7 +30,7 @@ brew install macdog
 
 ### Method 2: macOS Package Installer
 
-1. Download the latest MacDog.pkg from the [Releases page](https://github.com/YourUsername/MacDog/releases)
+1. Download the latest MacDog.pkg from the [Releases page](https://github.com/JohnDaeSo/ndog/releases)
 2. Double-click the package file to open it
 3. Follow the installer instructions
 4. MacDog will be installed in your Applications folder and available from Terminal
@@ -39,7 +39,7 @@ brew install macdog
 
 ```bash
 # Clone the repository
-git clone https://github.com/YourUsername/MacDog.git
+git clone https://github.com/JohnDaeSo/ndog.git
 cd MacDog
 
 # Build the application

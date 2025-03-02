@@ -1,10 +1,10 @@
 class Macdog < Formula
   desc "A native macOS network utility for sending files, messages, and creating connections"
-  homepage "https://github.com/YourUsername/MacDog"
-  url "https://github.com/YourUsername/MacDog/archive/refs/tags/v1.0.0.tar.gz"
-  sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+  homepage "https://github.com/JohnDaeSo/ndog"
+  url "https://github.com/JohnDaeSo/ndog/archive/refs/heads/main.tar.gz"
+  sha256 :no_check
   license "MIT"
-  head "https://github.com/YourUsername/MacDog.git", branch: "main"
+  head "https://github.com/JohnDaeSo/ndog.git", branch: "main"
 
   depends_on xcode: ["13.0", :build]
   depends_on macos: :big_sur
@@ -35,6 +35,8 @@ class Macdog < Formula
         ln -sf "#{prefix}/MacDog.app" "/Applications/MacDog.app"
       
       Run 'macdog --help' to see available options.
+      
+      For more information, visit: https://github.com/JohnDaeSo/ndog
     EOS
   end
 
