@@ -12,6 +12,25 @@ A Python-based network utility similar to ncat but designed to work with public 
 
 ## Installation
 
+### Method 1: Quick Install (Recommended)
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/ndog.git
+cd ndog
+
+# Run the installer script (which creates a system-wide or user-local command)
+# Using the bash installer:
+./install.sh
+
+# OR using the Python installer:
+python3 install.py
+```
+
+After installation, the `ndog` command will be available directly from anywhere in your system.
+
+### Method 2: Manual Installation
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/ndog.git
@@ -22,38 +41,45 @@ pip install -r requirements.txt
 
 # Make the script executable
 chmod +x ndog.py
+
+# Create a symbolic link to use without typing python
+sudo ln -s $(pwd)/ndog.py /usr/local/bin/ndog
+# OR for user-level installation
+mkdir -p ~/bin && ln -s $(pwd)/ndog.py ~/bin/ndog && export PATH="$PATH:$HOME/bin"
 ```
 
 ## Usage
+
+After installation, you can use ndog directly without typing "python" at the beginning:
 
 ### Basic Connection
 
 ```bash
 # Connect to a host
-python ndog.py -c <host> -p <port>
+ndog -c <host> -p <port>
 
 # Listen for incoming connections
-python ndog.py -l -p <port>
+ndog -l -p <port>
 ```
 
 ### File Transfer
 
 ```bash
 # Send a file
-python ndog.py -c <host> -p <port> -f <filename>
+ndog -c <host> -p <port> -f <filename>
 
 # Receive a file
-python ndog.py -l -p <port> -r <output_filename>
+ndog -l -p <port> -r <output_filename>
 ```
 
 ### Text Messaging
 
 ```bash
 # Send message
-python ndog.py -c <host> -p <port> -m "Your message"
+ndog -c <host> -p <port> -m "Your message"
 
 # Receive messages
-python ndog.py -l -p <port>
+ndog -l -p <port>
 ```
 
 ## Options
@@ -72,19 +98,19 @@ python ndog.py -l -p <port>
 
 ```bash
 # Start a listener on port 8080
-python ndog.py -l -p 8080
+ndog -l -p 8080
 
 # Connect to a listener
-python ndog.py -c example.com -p 8080
+ndog -c example.com -p 8080
 
 # Send a file
-python ndog.py -c example.com -p 8080 -f document.pdf
+ndog -c example.com -p 8080 -f document.pdf
 
 # Receive and save a file
-python ndog.py -l -p 8080 -r received_document.pdf
+ndog -l -p 8080 -r received_document.pdf
 
 # Send a message
-python ndog.py -c example.com -p 8080 -m "Hello from ndog!"
+ndog -c example.com -p 8080 -m "Hello from ndog!"
 ```
 
 ## License
