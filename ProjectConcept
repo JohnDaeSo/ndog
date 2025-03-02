@@ -1,0 +1,3 @@
+What this project is about:
+
+ndog -> its simmilar to the ncat command for ubuntu terminal. but ndog is from python and for public IPs meaning you can send files, send messages, etc while not needing to be on the same network.
