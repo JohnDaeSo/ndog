@@ -45,9 +45,9 @@ if command -v brew &> /dev/null; then
         echo -e "${BLUE}[*] Installing MacDog using Homebrew...${NC}"
         
         # Check if our tap is already installed
-        if ! brew tap | grep -q "macdog/tap"; then
+        if ! brew tap | grep -q "johndaeso/tap"; then
             echo -e "${BLUE}[*] Adding MacDog tap...${NC}"
-            brew tap macdog/tap
+            brew tap johndaeso/tap
         fi
         
         # Install MacDog
