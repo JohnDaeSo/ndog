@@ -60,6 +60,12 @@ ndog -c <host> -p <port>
 
 # Listen for incoming connections
 ndog -l -p <port>
+
+# Listen showing your local IP address instead of 0.0.0.0
+ndog -l -p <port> --local-ip
+
+# Listen showing your public IP address instead of 0.0.0.0
+ndog -l -p <port> --public-ip
 ```
 
 ### File Transfer
@@ -91,6 +97,8 @@ ndog -l -p <port>
 - `-r, --receive`: Specify filename to save received data
 - `-m, --message`: Send a text message
 - `-u, --udp`: Use UDP instead of TCP
+- `--local-ip`: Display local IP instead of 0.0.0.0 when listening
+- `--public-ip`: Display public IP instead of 0.0.0.0 when listening
 - `-v, --verbose`: Enable verbose output
 - `-h, --help`: Show help message
 
@@ -99,6 +107,12 @@ ndog -l -p <port>
 ```bash
 # Start a listener on port 8080
 ndog -l -p 8080
+
+# Start a listener on port 8080 displaying your local IP
+ndog -l -p 8080 --local-ip
+
+# Start a listener on port 8080 displaying your public IP
+ndog -l -p 8080 --public-ip
 
 # Connect to a listener
 ndog -c example.com -p 8080
