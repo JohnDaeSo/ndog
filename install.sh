@@ -76,7 +76,7 @@ cp utils/__init__.py "$PACKAGE_DIR/utils/__init__.py"
 chmod +x "$PACKAGE_DIR/ndog.py"
 
 # Create a wrapper script
-echo -e "${BLUE}[*] Creating wrapper script...${NC}"
+echo -e "${BLUE}[*] Creating wrapper script for direct execution without 'python' prefix...${NC}"
 cat > "$INSTALL_DIR/ndog" << EOF
 #!/bin/bash
 python3 "$PACKAGE_DIR/ndog.py" \$@
@@ -111,4 +111,5 @@ if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
 fi
 
 echo -e "${GREEN}[+] ndog has been successfully installed!${NC}"
-echo -e "${GREEN}[+] You can now run 'ndog --help' to see available options.${NC}" 
+echo -e "${GREEN}[+] You can now run 'ndog --help' to see available options.${NC}"
+echo -e "${GREEN}[+] The 'ndog' command can be run directly without 'python' prefix from anywhere.${NC}" 

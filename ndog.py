@@ -10,6 +10,7 @@ import os
 import time
 from tqdm import tqdm
 from colorama import Fore, Style, init
+import urllib.request
 
 # Import utility modules
 from utils.file_transfer import send_file, receive_file
@@ -33,6 +34,33 @@ def print_banner():
     """
     print(banner)
 
+def get_local_ip():
+    """Get the local IP address of the machine"""
+    try:
+        # Create a socket to determine the IP used for external connections
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # The destination doesn't need to be reachable
+        s.connect(('8.8.8.8', 1))
+        local_ip = s.getsockname()[0]
+        s.close()
+        return local_ip
+    except Exception:
+        # Fallback method if the above doesn't work
+        hostname = socket.gethostname()
+        local_ip = socket.gethostbyname(hostname)
+        return local_ip
+
+def get_public_ip():
+    """Get the public IP address of the machine"""
+    try:
+        # Use a service to determine the public IP
+        with urllib.request.urlopen('https://api.ipify.org') as response:
+            public_ip = response.read().decode('utf-8')
+        return public_ip
+    except Exception as e:
+        print(f"{Fore.YELLOW}[!] Couldn't determine public IP: {e}{Style.RESET_ALL}")
+        return None
+
 def create_client_socket(host, port, use_udp=False):
     """Create a client socket and connect to the specified host and port"""
     try:
@@ -53,7 +81,7 @@ def create_client_socket(host, port, use_udp=False):
         print(f"{Fore.RED}[!] Connection failed: {e}{Style.RESET_ALL}")
         sys.exit(1)
 
-def create_server_socket(port, use_udp=False):
+def create_server_socket(port, use_udp=False, use_local_ip=False, use_public_ip=False):
     """Create a server socket and listen on the specified port"""
     try:
         sock_type = socket.SOCK_DGRAM if use_udp else socket.SOCK_STREAM
@@ -61,11 +89,20 @@ def create_server_socket(port, use_udp=False):
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_socket.bind(('0.0.0.0', port))
         
+        # Determine which IP to display
+        display_ip = '0.0.0.0'  # Default
+        if use_local_ip:
+            display_ip = get_local_ip()
+        elif use_public_ip:
+            public_ip = get_public_ip()
+            if public_ip:
+                display_ip = public_ip
+        
         if not use_udp:  # For TCP
             server_socket.listen(5)
-            print(f"{Fore.GREEN}[+] Listening on 0.0.0.0:{port} (TCP){Style.RESET_ALL}")
+            print(f"{Fore.GREEN}[+] Listening on {display_ip}:{port} (TCP){Style.RESET_ALL}")
         else:  # For UDP
-            print(f"{Fore.GREEN}[+] Listening on 0.0.0.0:{port} (UDP){Style.RESET_ALL}")
+            print(f"{Fore.GREEN}[+] Listening on {display_ip}:{port} (UDP){Style.RESET_ALL}")
             
         return server_socket
     except socket.error as e:
@@ -114,7 +151,7 @@ def handle_client_mode(args):
 
 def handle_server_mode(args):
     """Handle server mode operation based on command line arguments"""
-    server_socket = create_server_socket(args.port, args.udp)
+    server_socket = create_server_socket(args.port, args.udp, args.use_local_ip, args.use_public_ip)
     
     try:
         if args.udp:
@@ -195,6 +232,13 @@ def parse_arguments():
     
     # Protocol options
     parser.add_argument('-u', '--udp', action='store_true', help='Use UDP instead of TCP')
+    
+    # IP display options
+    ip_group = parser.add_mutually_exclusive_group()
+    ip_group.add_argument('--local-ip', dest='use_local_ip', action='store_true', 
+                         help='Show local IP address instead of 0.0.0.0')
+    ip_group.add_argument('--public-ip', dest='use_public_ip', action='store_true',
+                         help='Show public IP address instead of 0.0.0.0')
     
     # Other options
     parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose output')

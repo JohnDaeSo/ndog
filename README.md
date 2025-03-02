@@ -20,14 +20,24 @@ A Python-based network utility similar to ncat but designed to work with public 
 
 ## Installation
 
-### Option 1: Install from PyPI (Coming Soon)
+### Method 1: Quick Install (Recommended)
 
 ```bash
-# This is not available yet - coming soon!
-# pip install ndog
+# Clone the repository
+git clone https://github.com/JohnDaeSo/ndog.git
+cd ndog
+
+# Run the installer script (which creates a system-wide or user-local command)
+# Using the bash installer:
+./install.sh
+
+# OR using the Python installer:
+python3 install.py
 ```
 
-### Option 2: Manual Installation
+After installation, the `ndog` command will be available directly from anywhere in your system.
+
+### Method 2: Manual Installation
 
 ```bash
 # Clone the repository
@@ -40,63 +50,90 @@ pip install -r requirements.txt
 # Make the script executable (Linux/macOS)
 chmod +x ndog.py
 chmod +x ndog_simple.py
-```
 
-## Quick Start
-
-```bash
-# Start a server (listening for connections)
-python ndog_simple.py -l -p 8080
-
-# Connect to a server
-python ndog_simple.py -c example.com -p 8080
+# Create a symbolic link to use without typing python
+sudo ln -s $(pwd)/ndog.py /usr/local/bin/ndog
+# OR for user-level installation
+mkdir -p ~/bin && ln -s $(pwd)/ndog.py ~/bin/ndog && export PATH="$PATH:$HOME/bin"
 ```
 
 ## Usage
 
-ndog can be used in several ways depending on your needs.
+After installation, you can use ndog directly without typing "python" at the beginning:
 
 ### Basic Connection
 
 ```bash
 # Connect to a host
-python ndog_simple.py -c <host> -p <port>
+ndog -c <host> -p <port>
 
 # Listen for incoming connections
-python ndog_simple.py -l -p <port>
+ndog -l -p <port>
+
+# Listen showing your local IP address instead of 0.0.0.0
+ndog -l -p <port> --local-ip
+
+# Listen showing your public IP address instead of 0.0.0.0
+ndog -l -p <port> --public-ip
 ```
 
 ### File Transfer
 
 ```bash
 # Send a file
-python ndog_simple.py -c <host> -p <port> -f <filename>
+ndog -c <host> -p <port> -f <filename>
 
 # Receive a file
-python ndog_simple.py -l -p <port> -r <output_filename>
+ndog -l -p <port> -r <output_filename>
 ```
 
 ### Text Messaging
 
 ```bash
-# Send a single message and exit
-python ndog_simple.py -c <host> -p <port> -m "Your message"
+# Send message
+ndog -c <host> -p <port> -m "Your message"
 
-# Start interactive chat mode
-python ndog_simple.py -c <host> -p <port>  # as client
-python ndog_simple.py -l -p <port>         # as server
+# Receive messages
+ndog -l -p <port>
 ```
 
-### Using UDP Instead of TCP
+## Command-Line Options
 
-Add the `-u` flag to any command to use UDP instead of TCP:
+- `-c, --connect`: Connect to a host
+- `-l, --listen`: Listen for incoming connections
+- `-p, --port`: Specify port number
+- `-f, --file`: Specify file to send
+- `-r, --receive`: Specify filename to save received data
+- `-m, --message`: Send a text message
+- `-u, --udp`: Use UDP instead of TCP
+- `--local-ip`: Display local IP instead of 0.0.0.0 when listening
+- `--public-ip`: Display public IP instead of 0.0.0.0 when listening
+- `-v, --verbose`: Enable verbose output
+- `-h, --help`: Show help message
+
+## Examples
 
 ```bash
-# UDP client
-python ndog_simple.py -c <host> -p <port> -u
+# Start a listener on port 8080
+ndog -l -p 8080
 
-# UDP server
-python ndog_simple.py -l -p <port> -u
+# Start a listener on port 8080 displaying your local IP
+ndog -l -p 8080 --local-ip
+
+# Start a listener on port 8080 displaying your public IP
+ndog -l -p 8080 --public-ip
+
+# Connect to a listener
+ndog -c example.com -p 8080
+
+# Send a file
+ndog -c example.com -p 8080 -f document.pdf
+
+# Receive and save a file
+ndog -l -p 8080 -r received_document.pdf
+
+# Send a message
+ndog -c example.com -p 8080 -m "Hello from ndog!"
 ```
 
 ## Interactive Chat Mode

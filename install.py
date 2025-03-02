@@ -107,7 +107,7 @@ def copy_files(package_dir):
 
 def create_wrapper(bin_dir, package_dir):
     """Create a wrapper script in the bin directory"""
-    print(f"{Colors.BLUE}[*] Creating wrapper script...{Colors.NC}")
+    print(f"{Colors.BLUE}[*] Creating wrapper script for direct execution without 'python' prefix...{Colors.NC}")
     
     wrapper_path = bin_dir / 'ndog'
     
@@ -122,6 +122,7 @@ python3 "{package_dir / 'ndog.py'}" "$@"
                  os.stat(wrapper_path).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
         
         print(f"{Colors.GREEN}[+] Wrapper script created at {wrapper_path}{Colors.NC}")
+        print(f"{Colors.GREEN}[+] This allows you to run 'ndog' directly without typing 'python'{Colors.NC}")
         return True
     except Exception as e:
         print(f"{Colors.RED}[!] Failed to create wrapper script: {e}{Colors.NC}")
@@ -191,6 +192,7 @@ def main():
     
     print(f"\n{Colors.GREEN}[+] ndog has been successfully installed!{Colors.NC}")
     print(f"{Colors.GREEN}[+] You can now run 'ndog --help' to see available options.{Colors.NC}")
+    print(f"{Colors.GREEN}[+] The 'ndog' command can be run directly without 'python' prefix from anywhere.{Colors.NC}")
     
     return 0
 
