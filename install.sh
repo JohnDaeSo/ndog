@@ -27,15 +27,40 @@ fi
 
 echo "Python $PY_VERSION found."
 
+# Remove existing virtual environment if it's incomplete
+if [ -d ".venv" ] && [ ! -f ".venv/bin/activate" ]; then
+    echo "Found incomplete virtual environment. Removing it..."
+    rm -rf .venv
+fi
+
 # Create virtual environment
 if [ ! -d ".venv" ]; then
     echo "Creating virtual environment..."
     $PYTHON -m venv .venv
+    
+    # Verify the virtual environment was created correctly
+    if [ ! -f ".venv/bin/activate" ]; then
+        echo "Error: Failed to create virtual environment properly."
+        echo "Please check your Python installation and venv module."
+        exit 1
+    fi
 fi
 
 # Activate virtual environment
 echo "Activating virtual environment..."
-source .venv/bin/activate
+if [ -f ".venv/bin/activate" ]; then
+    source .venv/bin/activate
+else
+    echo "Error: Virtual environment activation script not found."
+    echo "Try deleting the .venv directory and running this script again."
+    exit 1
+fi
+
+# Verify activation worked
+if [ -z "$VIRTUAL_ENV" ]; then
+    echo "Error: Failed to activate virtual environment."
+    exit 1
+fi
 
 # Install dependencies
 echo "Installing dependencies..."
