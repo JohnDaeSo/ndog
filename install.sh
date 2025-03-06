@@ -1,115 +1,67 @@
 #!/bin/bash
+# Installation script for ndog
 
-# ndog installer script
-# This script installs the ndog network utility to your system
+set -e
 
-# Colors for terminal output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+echo "Installing ndog - Enhanced Network Communication Tool"
+echo "===================================================="
 
-# Banner
-echo -e "${GREEN}"
-echo "███╗   ██╗██████╗  ██████╗  ██████╗ "
-echo "████╗  ██║██╔══██╗██╔═══██╗██╔════╝ "
-echo "██╔██╗ ██║██║  ██║██║   ██║██║  ███╗"
-echo "██║╚██╗██║██║  ██║██║   ██║██║   ██║"
-echo "██║ ╚████║██████╔╝╚██████╔╝╚██████╔╝"
-echo "╚═╝  ╚═══╝╚═════╝  ╚═════╝  ╚═════╝ "
-echo -e "${NC}"
-echo "Installer for ndog - Network utility for public IPs"
-echo ""
+# Find the Python executable
+PYTHON=$(command -v python3 || command -v python)
 
-# Detect the installation directory
-if [ -w "/usr/local/bin" ]; then
-    INSTALL_DIR="/usr/local/bin"
-elif [ -w "/usr/bin" ]; then
-    INSTALL_DIR="/usr/bin"
-else
-    # Default to local user bin directory if system directories are not writable
-    INSTALL_DIR="$HOME/.local/bin"
-    mkdir -p "$INSTALL_DIR"
-fi
-
-# Create the package directory
-PACKAGE_DIR="/usr/local/share/ndog"
-if [ ! -w "/usr/local/share" ]; then
-    PACKAGE_DIR="$HOME/.local/share/ndog"
-fi
-mkdir -p "$PACKAGE_DIR"
-mkdir -p "$PACKAGE_DIR/utils"
-
-echo -e "${BLUE}[*] Installing ndog to $PACKAGE_DIR${NC}"
-
-# Check for required system packages
-echo -e "${BLUE}[*] Checking for Python and pip...${NC}"
-if ! command -v python3 &> /dev/null; then
-    echo -e "${RED}[!] Python 3 is not installed. Please install Python 3 and try again.${NC}"
+if [ -z "$PYTHON" ]; then
+    echo "Error: Python not found. Please install Python 3."
     exit 1
 fi
 
-if ! command -v pip3 &> /dev/null; then
-    echo -e "${YELLOW}[!] pip3 is not installed. Attempting to install...${NC}"
-    python3 -m ensurepip --upgrade || {
-        echo -e "${RED}[!] Failed to install pip. Please install pip manually and try again.${NC}"
-        exit 1
-    }
+# Check Python version
+PY_VERSION=$($PYTHON --version | awk '{print $2}')
+PY_MAJOR=$(echo $PY_VERSION | cut -d. -f1)
+PY_MINOR=$(echo $PY_VERSION | cut -d. -f2)
+
+if [ "$PY_MAJOR" -lt 3 ] || ([ "$PY_MAJOR" -eq 3 ] && [ "$PY_MINOR" -lt 8 ]); then
+    echo "Error: ndog requires Python 3.8 or later."
+    echo "Current version: $PY_VERSION"
+    exit 1
 fi
 
-# Install Python dependencies
-echo -e "${BLUE}[*] Installing Python dependencies...${NC}"
-pip3 install argparse tqdm colorama ipaddress --user || {
-    echo -e "${RED}[!] Failed to install dependencies. Please check your internet connection and try again.${NC}"
-    exit 1
-}
+echo "Python $PY_VERSION found."
 
-# Copy the main program files
-echo -e "${BLUE}[*] Copying program files...${NC}"
-cp ndog.py "$PACKAGE_DIR/ndog.py"
-cp utils/file_transfer.py "$PACKAGE_DIR/utils/file_transfer.py"
-cp utils/messaging.py "$PACKAGE_DIR/utils/messaging.py"
-cp utils/__init__.py "$PACKAGE_DIR/utils/__init__.py"
+# Create virtual environment
+if [ ! -d ".venv" ]; then
+    echo "Creating virtual environment..."
+    $PYTHON -m venv .venv
+fi
 
-# Make the files executable
-chmod +x "$PACKAGE_DIR/ndog.py"
+# Activate virtual environment
+echo "Activating virtual environment..."
+source .venv/bin/activate
 
-# Create a wrapper script
-echo -e "${BLUE}[*] Creating wrapper script for direct execution without 'python' prefix...${NC}"
-cat > "$INSTALL_DIR/ndog" << EOF
-#!/bin/bash
-python3 "$PACKAGE_DIR/ndog.py" \$@
-EOF
+# Install dependencies
+echo "Installing dependencies..."
+pip install -r requirements.txt
 
-# Make the wrapper executable
-chmod +x "$INSTALL_DIR/ndog"
+# Install the package in development mode
+echo "Installing ndog..."
+pip install -e .
 
-# Check if the installation directory is in the PATH
-if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
-    echo -e "${YELLOW}[!] $INSTALL_DIR is not in your PATH.${NC}"
-    echo -e "${YELLOW}    Add the following line to your ~/.bashrc or ~/.zshrc:${NC}"
-    echo -e "${YELLOW}    export PATH=\"\$PATH:$INSTALL_DIR\"${NC}"
+# Create a symlink to ndog in /usr/local/bin if not there
+if [ ! -f "/usr/local/bin/ndog" ]; then
+    echo "Creating symlink in /usr/local/bin..."
     
-    # Add to PATH for the current session
-    export PATH="$PATH:$INSTALL_DIR"
-    
-    # Offer to add to .bashrc
-    read -p "Would you like to add $INSTALL_DIR to your PATH automatically? (y/n) " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        if [ -f "$HOME/.bashrc" ]; then
-            echo "export PATH=\"\$PATH:$INSTALL_DIR\"" >> "$HOME/.bashrc"
-            echo -e "${GREEN}[+] Added $INSTALL_DIR to your PATH in ~/.bashrc${NC}"
-        elif [ -f "$HOME/.zshrc" ]; then
-            echo "export PATH=\"\$PATH:$INSTALL_DIR\"" >> "$HOME/.zshrc"
-            echo -e "${GREEN}[+] Added $INSTALL_DIR to your PATH in ~/.zshrc${NC}"
-        else
-            echo -e "${YELLOW}[!] Could not find .bashrc or .zshrc. Please add $INSTALL_DIR to your PATH manually.${NC}"
-        fi
+    # First check if we have permissions
+    if [ -w "/usr/local/bin" ]; then
+        ln -sf "$(pwd)/ndog.sh" /usr/local/bin/ndog
+    else
+        echo "Requesting sudo permissions to create symlink..."
+        sudo ln -sf "$(pwd)/ndog.sh" /usr/local/bin/ndog
     fi
+    
+    echo "Symlink created."
+else
+    echo "Symlink already exists in /usr/local/bin."
 fi
 
-echo -e "${GREEN}[+] ndog has been successfully installed!${NC}"
-echo -e "${GREEN}[+] You can now run 'ndog --help' to see available options.${NC}"
-echo -e "${GREEN}[+] The 'ndog' command can be run directly without 'python' prefix from anywhere.${NC}" 
+echo "Installation complete!"
+echo "You can now run 'ndog' from anywhere."
+echo "For usage information, run 'ndog --help'." 
